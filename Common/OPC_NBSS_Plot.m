@@ -73,7 +73,7 @@ if isfield(OPC.NBSS,'NLin')
         out.h3 = NaN;
     end
 else
-    out.h3 = 0;%loglog(h,0,0);
+    out.h3 = 0; %loglog(h,0,0);
 end
 
 
@@ -93,11 +93,10 @@ ESD = num2str(roundn(ESD.*1e3,-2));
 
 XTL = get(h,'XTickLabel');
 
-set(h,'XTickLabel','','fontsize',txt-2)
+set(h,'XTickLabel','','fontsize',txt)
 
 for a = 1:length(XTL)   
-    eval(['ESD_txt = {''',XTL{a,:},''';''(',ESD(a,:),' mm)''};']);
-    
+    eval(['ESD_txt = {''',XTL{a,:},''';''(',ESD(a,:),' mm)''};']); 
     out.tx(a) = text(XT(a),YT,ESD_txt,'horizontalalignment','center','verticalalignment','top','Parent',h,'fontsize',txt);
     clear ESD_txt
 end
@@ -108,7 +107,7 @@ xlabel(h,{'';'';'Zooplankton Size Class (mg)'},'fontsize',txt)
 ylabel(h,'Normalised Biomass (m^{-3})','fontsize',txt)
 
 if legend == 1
-    out.an = OPC_NBSS_Plot_Legend(OPC,txt);
+    out.an = OPC_NBSS_Plot_Legend(OPC,txt-2);
 end
 out.h = h;
 
