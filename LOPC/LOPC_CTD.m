@@ -41,6 +41,11 @@ clear ixfake
 
 if ~isempty(ixCTD)
     
+    % Initialise CTD so the isfield commands work below.
+    if isfield(LOPC,'CTD') == 0
+       LOPC.CTD.Raw.Temp = [];
+    end
+    
     str = regexp(data(ixCTD),'[^a-zA-Z0-9 +.,\t\-]'); % Find only the rows with alphanumeric text
     ix = find(~cellfun('isempty',str)==0); % Get indexes
     
@@ -61,38 +66,12 @@ if ~isempty(ixCTD)
     
     ncols = size(CTD,2);
     
-    %     ncols = length(str2num(temp(1,:))); % Hope the first line is correct because I will set the number of columns by it
-    
-    %     % Check ncols
-    %     for c = 2:6
-    %         check(c) = length(str2num(temp(c,:)));
-    %     end
-    %     check = mode(check);
-    %
-    %     if check ~= ncols & check ~= 0
-    %         % The first CTD is often incorrect. If this is the case, I will
-    %         % take a guess and remove it.
-    %         temp = temp(2:end,:);
-    %         ncols = check; % The middle ones always seem to be correct
-    %         ixCTD = ixCTD(2:end,1);
-    %     end
-    
-    
-    %% OLD CODE. REPLACED WITH LINES ABOVE
-    %     CTD = ones(length(temp),ncols).*NaN; % Preallocate
-    %     for i = 1:size(temp,1)
-    %         CTD_temp =  str2num(temp(i,:));
-    %         if length(CTD_temp) == ncols
-    %             CTD(i,:) = CTD_temp;
-    %         end
-    %     end
-    
     
     % If CTD Model has not been defined in the prelimary scripts, try and
     % figure out what it is.
-    if isfield(LOPC.CTD,'Model') == 0
+    if  isfield(LOPC.CTD,'Model') == 0
         
-        %% See if we can work out the CTD model. It seems to be hit and miss
+        % See if we can work out the CTD model. It seems to be hit and miss
         % whether the information is included in the header. Examples I have
         % seen include.
         
