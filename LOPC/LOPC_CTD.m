@@ -11,9 +11,8 @@ function LOPC = LOPC_CTD(LOPC,data)
 % upon the sw toolbox. I need to update this to use the new McDougall
 % toolbox.
 %
-% TODO: Update sw_toolbox
-%
 % Jason Everett (UNSW) January 2013
+% Last updated August 2019
 
 % Find end of the header
 eval('s = strfind(data,''#'');')
@@ -228,15 +227,8 @@ if ~isempty(ixCTD)
     % Pressure
     LOPC.CTD.Pres = interp1q(LOPC.CTD.Raw.datenum,LOPC.CTD.Raw.Pres,LOPC.datenum);
     
-    %     try
     LOPC.CTD.Depth = -gsw_z_from_p(LOPC.CTD.Pres,LOPC.GPS.Lat);
-    %     catch
-    %         disp(' ')
-    %         disp('Using LOPC.Lat to constrain Pressure-Depth Conversion')
-    %
-    %         LOPC.CTD.Depth = -gsw_z_from_p(LOPC.CTD.Pres,LOPC.Lat(1));
-    %     end
-    %
+    
     fi_bad = find(isnan(LOPC.CTD.Depth)==1);
     fi_good = find(isnan(LOPC.CTD.Depth)==0);
     LOPC.CTD.Depth(fi_bad) = interp1(LOPC.datenum(fi_good),LOPC.CTD.Depth(fi_good),LOPC.datenum(fi_bad),'linear','extrap');
@@ -253,7 +245,6 @@ if ~isempty(ixCTD)
         LOPC.CTD.Cond = interp1q(LOPC.CTD.Raw.datenum,LOPC.CTD.Raw.Cond,LOPC.datenum).*10;
         
         LOPC.CTD.Salt = gsw_SP_from_C(LOPC.CTD.Cond,LOPC.CTD.Temp,LOPC.CTD.Pres);
-        %         LOPC.CTD.Salt = sw_salt(LOPC.CTD.Cond,LOPC.CTD.Temp,LOPC.CTD.Pres);
         
     end
     
