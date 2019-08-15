@@ -15,7 +15,6 @@ OPC.Pareto.Dist(2:sizesorts,2) = (sizesorts-(2:sizesorts))/(sizesorts-1); % Prob
 X = log10(4/3*pi*(OPC.Pareto.Dist(1:end-1,1)/2).^3);
 Y = log10(OPC.Pareto.Dist(1:end-1,2));
 
-
 if ~isempty(Y)
     
     if license('test', 'Statistics_Toolbox') == 1
