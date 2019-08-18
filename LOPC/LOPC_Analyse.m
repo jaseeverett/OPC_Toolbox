@@ -46,8 +46,8 @@ LOPC = LOPC_GPS(LOPC,data);
 if isfield(LOPC,'GPS') == 1
     if ~isempty(find(isnan(LOPC.GPS.Lat)==1,1))
         % Replace missing NaNs
-        LOPC.GPS.Lat = nan_replace(LOPC.GPS.Lat,LOPC.datenum,'linear');
-        LOPC.GPS.Lon = nan_replace(LOPC.GPS.Lon,LOPC.datenum,'linear');
+        LOPC.GPS.Lat = fillmissing(LOPC.GPS.Lat,'linear');
+        LOPC.GPS.Lon = fillmissing(LOPC.GPS.Lon,'linear');   
     end
 end
 %% Load CTD data

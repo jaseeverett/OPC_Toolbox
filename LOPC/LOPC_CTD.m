@@ -131,7 +131,7 @@ if ~isempty(ixCTD)
             disp(['CTD is identified as a ',LOPC.CTD.Model])
         end
         
-        if isfield(LOPC,'CTD')==0
+        if isfield(LOPC.CTD,'Model')==0
             disp('CTD unable to be identified')
             disp(['Its data has ',num2str(ncols),' fields so guess it is:'])
             

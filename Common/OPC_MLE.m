@@ -25,12 +25,24 @@ function MLE = OPC_MLE(x)
 % Test data when debugging
 % x = csvread('MyData.csv');    %  Edwards data
 
-
-if ~isempty(x)
+ MLE.b = NaN;
+    MLE.bSlope = NaN;
+    MLE.sumlogx = NaN;
+    MLE.xmin = NaN;
+    MLE.xmax = NaN;
+    MLE.xn = NaN;
+    MLE.Output = NaN;
+    MLE.Gradient = NaN;
+    MLE.Hessian = NaN;
     
-    if min(x) <= 0 || min(x) >= max(x)
-        error("Parameters out of bounds in negLL.PLB")
-    end
+return
+
+
+if ~isempty(x) | min(x) <= 0 | min(x) >= max(x)
+    
+%     if min(x) <= 0 || min(x) >= max(x)
+%         error("Parameters out of bounds in negLL.PLB")
+%     end
     
     sumlogx = sum(log(x));
     xmin = min(x);
