@@ -93,7 +93,7 @@ OPC.secs_diff(1) =  nanmean(OPC.secs_diff);
 
 OPC.secs = (OPC.datenum-OPC.datenum(1)).*86400;
 
-if isfield(OPC,'User') & OPC.Flow.flow_mark~=2% At this stage, not all files apply the 'User' file prior to this point. I will fix this u pin a later version
+if isfield(OPC,'User') & OPC.Flow.flow_mark~=2 % At this stage, not all files apply the 'User' file prior to this point. I will fix this u pin a later version
     %% If these conditions are met, it is likely that the VDV Acoustic and GO Flow Meter are on the OPC
     if strcmp(OPC.User,'Hopcroft')==1 && (isfield(OPC.Raw,'ID12')==1 || isfield(OPC.Raw,'ID13')==1)
         
@@ -113,7 +113,7 @@ if isfield(OPC,'User') & OPC.Flow.flow_mark~=2% At this stage, not all files app
     OPC.Flow.Velocity = (m * OPC.Flow.RawCounts + b) ./100; % m/s
     OPC.Flow.Vol = OPC.SA.*OPC.Flow.Velocity; % (m3/s)
     OPC.Flow.TotalVol = nansum(OPC.Flow.Vol);
-    OPC.Flow.FlowUsed = 'FlowMeter';
+    OPC.Flow.FlowUsed = 'Flowmeter';
     OPC.Flow.flow_mark = 5;
     
     OPC.Flow.Dist = OPC.Flow.Velocity .* OPC.secs_diff;

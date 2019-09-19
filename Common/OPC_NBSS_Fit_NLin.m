@@ -2,10 +2,20 @@ function NBSS = OPC_NBSS_Fit_NLin(NBSS,Weight)
 
 lastwarn('')
 
+  NBSS.NLin.mdl = NaN;
+    NBSS.NLin.YVertex = NaN;
+    NBSS.NLin.XVertex = NaN;
+    NBSS.NLin.Curve = NaN;
+    NBSS.NLin.r2 = NaN;
+    NBSS.NLin.illconditioned = 1;
+    
+    return
+    
+    
+
 % Turn warnings off. If the warning occurs, the state is recorded below.
 warning('off','stats:LinearModel:RankDefDesignMat')
 warning('off','stats:nlinfit:IllConditionedJacobian')
-
 
 if license('test', 'Statistics_Toolbox') == 0
  
@@ -30,8 +40,7 @@ else
         catch
             paused
         end
-            
-            
+      
     elseif nargin == 2
         nlm = fitnlm(log10(NBSS.Bins),log10(NBSS.NB),@dickie_fit,guess0,'options',options,'Weights',Weight);
     end
@@ -51,17 +60,13 @@ else
        [~, LASTID] = lastwarn;
     if strcmp(LASTID,'stats:LinearModel:RankDefDesignMat')==1 || strcmp(LASTID,'stats:nlinfit:IllConditionedJacobian')==1 
         NBSS = setNaN(NBSS);
-    end
-     
+    end 
 end
-
 
 warning('on','stats:LinearModel:RankDefDesignMat')
 warning('on','stats:nlinfit:IllConditionedJacobian')
 
-
 function NBSS = setNaN(NBSS)
-
     NBSS.NLin.mdl = NaN;
     NBSS.NLin.YVertex = NaN;
     NBSS.NLin.XVertex = NaN;

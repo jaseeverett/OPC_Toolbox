@@ -56,14 +56,19 @@ for i = 1:length(s.datenum)
         L.SMEP = s.SMEP(i,:);
         
         L.Flow.TotalVol = s.Flow.Vol(i,1);
-        
+            
         L = OPC_Pareto(L);
         L = OPC_NBSS(L);
+        
+%         if L.Flow.TotalVol == 0
+%             L.Stats.Biomass    
+%         end
         
         s.Bins_ESD = L.Param.H_Bins;
         
         s.Abundance(i,1) = L.Stats.Abundance;
         s.Biomass(i,1) = L.Stats.Biomass;
+        
         s.GeoMn(i,1) = L.Stats.GeoMn;
         s.BinnedBiomass(i,:) = L.NBSS.all.Binned_Bio;
         
@@ -76,8 +81,7 @@ for i = 1:length(s.datenum)
         s.NBSS_r2(i,1) = L.NBSS.Lin.r2;
         s.NBSS_Curve(i,1) = L.NBSS.NLin.Curve;
         s.Counts(i,1) = L.Stats.Total_Counts;
-        
-            
+                   
         clear L
     end
 end

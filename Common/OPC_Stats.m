@@ -6,6 +6,7 @@ OPC.Stats.Total_Counts = length(OPC.Pareto.ESDs);
 OPC.Stats.Abundance = OPC.Stats.Total_Counts./OPC.Flow.TotalVol;
 
 OPC.Stats.Biomass = sum(OPC.NBSS.all.Binned_Bio);
+
 % OPC.Stats.Biomass_Check = sum(OPC.NBSS.Binned_Bio);
 
 OPC.Stats.BioVol = sum(OPC.NBSS.all.Binned_BioVol);
