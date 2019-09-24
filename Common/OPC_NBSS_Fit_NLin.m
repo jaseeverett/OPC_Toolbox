@@ -1,29 +1,31 @@
 function NBSS = OPC_NBSS_Fit_NLin(NBSS,Weight)
 
+% Non-linear fitting is turned off at the moment.
+
 lastwarn('')
 
-  NBSS.NLin.mdl = NaN;
-    NBSS.NLin.YVertex = NaN;
-    NBSS.NLin.XVertex = NaN;
-    NBSS.NLin.Curve = NaN;
-    NBSS.NLin.r2 = NaN;
-    NBSS.NLin.illconditioned = 1;
-    
-    return
-    
-    
+NBSS.NLin.mdl = NaN;
+NBSS.NLin.YVertex = NaN;
+NBSS.NLin.XVertex = NaN;
+NBSS.NLin.Curve = NaN;
+NBSS.NLin.r2 = NaN;
+NBSS.NLin.illconditioned = 1;
+
+return
+
+
 
 % Turn warnings off. If the warning occurs, the state is recorded below.
 warning('off','stats:LinearModel:RankDefDesignMat')
 warning('off','stats:nlinfit:IllConditionedJacobian')
 
 if license('test', 'Statistics_Toolbox') == 0
- 
+    
     NBSS = setNaN(NBSS);
-
-
+    
+    
 elseif length(NBSS.Bins) < 5 || sum(NBSS.Histo) < 500 || sum(NBSS.Binned_Bio) == 0 || sum(isfinite(NBSS.NB)==0) > 0
-
+    
     NBSS = setNaN(NBSS);
     
 else
@@ -38,9 +40,9 @@ else
         try
             nlm = fitnlm(log10(NBSS.Bins),log10(NBSS.NB),@dickie_fit,guess0,'options',options);
         catch
-            paused
+            error('fitnlm not working in OPC_NBSS_Fit_NLim')
         end
-      
+        
     elseif nargin == 2
         nlm = fitnlm(log10(NBSS.Bins),log10(NBSS.NB),@dickie_fit,guess0,'options',options,'Weights',Weight);
     end
@@ -57,20 +59,19 @@ else
     [~, NBSS.NLin.yci] = predict(nlm,log10(NBSS.Bins'));
     NBSS.NLin.illconditioned = 0;
     
-       [~, LASTID] = lastwarn;
-    if strcmp(LASTID,'stats:LinearModel:RankDefDesignMat')==1 || strcmp(LASTID,'stats:nlinfit:IllConditionedJacobian')==1 
+    [~, LASTID] = lastwarn;
+    if strcmp(LASTID,'stats:LinearModel:RankDefDesignMat')==1 || strcmp(LASTID,'stats:nlinfit:IllConditionedJacobian')==1
         NBSS = setNaN(NBSS);
-    end 
+    end
 end
 
 warning('on','stats:LinearModel:RankDefDesignMat')
 warning('on','stats:nlinfit:IllConditionedJacobian')
 
 function NBSS = setNaN(NBSS)
-    NBSS.NLin.mdl = NaN;
-    NBSS.NLin.YVertex = NaN;
-    NBSS.NLin.XVertex = NaN;
-    NBSS.NLin.Curve = NaN;
-    NBSS.NLin.r2 = NaN;
-    NBSS.NLin.illconditioned = 1;
-    
+NBSS.NLin.mdl = NaN;
+NBSS.NLin.YVertex = NaN;
+NBSS.NLin.XVertex = NaN;
+NBSS.NLin.Curve = NaN;
+NBSS.NLin.r2 = NaN;
+NBSS.NLin.illconditioned = 1;
