@@ -68,7 +68,7 @@ for a = 1:length(files)
             tmp.Flow.TotalVol = sum(tmp.Flow.Vol);
             
             disp(' ')
-            disp(['Replacing Flowmeter with Transit Speed due to FlowMeter Probs in file: ',tmp.FileName'])
+            disp(['Replacing Flowmeter with Transit Speed due to FlowMeter Probs in file: ',tmp.FileName])
             disp(' ')
         end
         
