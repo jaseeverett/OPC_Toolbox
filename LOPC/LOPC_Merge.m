@@ -49,11 +49,19 @@ for a = 1:length(files)
                 strcmpi(tmp.FileName,'LOPC/LOPC_2016-04-06_070527.dat') == 1 | ...
                 strcmpi(tmp.FileName,'LOPC/LOPC_2018-04-07_082805.dat') == 1 | ...
                 strcmpi(tmp.FileName,'LOPC/LOPC_2018-04-23_085939.dat') == 1 | ...
-                strcmpi(tmp.FileName,'LOPC/LOPC_2018-05-03_084845.dat') == 1 | ...
+                strcmpi(tmp.FileName,'LOPC/LOPC_2018-05-03_084845.dat') == 1 | ... 
                 strcmpi(tmp.FileName,'LOPC/LOPC_2018-05-06_090521.dat') == 1 | ...
-                strcmpi(tmp.FileName,'LOPC/LOPC_2018-05-07_043546.dat') == 1
+                strcmpi(tmp.FileName,'LOPC/LOPC_2018-05-07_043546.dat') == 1 | ...
+                strcmpi(tmp.FileName,'LOPC/LOPC_2018-11-08_150034.dat') == 1 | ...
+                strcmpi(tmp.FileName,'LOPC/LOPC_2018-11-11_075926.dat') == 1 | ...
+                strcmpi(tmp.FileName,'LOPC/LOPC_2018-11-11_082431.dat')
+            
 
-            tmp.Flow = rmfield(tmp.Flow,'Meter');
+            if isfield(tmp.Flow,'Meter')
+                tmp.Flow = rmfield(tmp.Flow,'Meter');
+            else
+                disp(['No flowmeter at all in ',tmp.FileName,'. Nothing to remove'])
+            end
             
             tmp.Flow.Velocity = tmp.Flow.Transit.Velocity;
             tmp.Flow.Velocity = nan_replace(tmp.Flow.Velocity,tmp.datenum);
@@ -118,6 +126,7 @@ for a = 1:length(files)
         
         LOPC.SMEP = tmp.SMEP;
         LOPC.Flow = tmp.Flow;
+        LOPC.Eng = tmp.Eng;
         
         if dat == 1 && isfield(tmp,'GPS')
             LOPC.Lat = tmp.GPS.Lat;
@@ -170,6 +179,17 @@ for a = 1:length(files)
         
         LOPC.SMEP = [LOPC.SMEP; tmp.SMEP];
         
+        %% Do Engineering
+        LOPC.Flow.Eng.Snapshot_Indicator = [LOPC.Eng.Snapshot_Indicator; tmp.Eng.Snapshot_Indicator];
+        LOPC.Eng.Threshold = [LOPC.Eng.Threshold; tmp.Eng.Threshold];
+        LOPC.Eng.Sample_Number = [LOPC.Eng.Sample_Number; tmp.Eng.Sample_Number];
+        LOPC.Eng.Flow_Counts = [LOPC.Eng.Flow_Counts; tmp.Eng.Flow_Counts];
+        LOPC.Eng.Delta_Time = [LOPC.Eng.Delta_Time; tmp.Eng.Delta_Time];
+        LOPC.Eng.Buffer_Overrun = [LOPC.Eng.Buffer_Overrun; tmp.Eng.Buffer_Overrun];
+        LOPC.Eng.Laser_Monitor = [LOPC.Eng.Laser_Monitor; tmp.Eng.Laser_Monitor];
+        LOPC.Eng.Electronic_Counts = [LOPC.Eng.Electronic_Counts; tmp.Eng.Electronic_Counts];
+        LOPC.Eng.Count_Period = [LOPC.Eng.Count_Period; tmp.Eng.Count_Period];
+        LOPC.Eng.Laser_Voltage = [LOPC.Eng.Laser_Voltage; tmp.Eng.Laser_Voltage];
         
         %% Do Flow
         
@@ -179,6 +199,7 @@ for a = 1:length(files)
         LOPC.Flow.Transit.Vol = [LOPC.Flow.Transit.Vol; tmp.Flow.Transit.Vol];
         LOPC.Flow.Transit.TotalVol = sum(LOPC.Flow.Transit.Vol);
         LOPC.Flow.Transit.Dist = [LOPC.Flow.Transit.Dist; tmp.Flow.Transit.Dist];
+        LOPC.Flow.Transit.Interp = [LOPC.Flow.Transit.Interp; tmp.Flow.Transit.Interp];
         
 %         % Volume from Flow Meter
         if isfield(tmp.Flow,'Meter') % Flow meter exists and I need to store it
@@ -187,9 +208,7 @@ for a = 1:length(files)
             LOPC.Flow.Meter.Vol = [LOPC.Flow.Meter.Vol; tmp.Flow.Meter.Vol];
             LOPC.Flow.Meter.TotalVol = sum(LOPC.Flow.Meter.Vol);
             LOPC.Flow.Meter.Dist = [LOPC.Flow.Meter.Dist; tmp.Flow.Meter.Dist];
-
         end
-       
 
         % The determination of Flow Meter vs Transit Speed is done in LOPC_Flow
         LOPC.Flow.Velocity = [LOPC.Flow.Velocity; tmp.Flow.Velocity];  
@@ -231,9 +250,9 @@ for a = 1:length(files)
         
     end
     
-    LOPC.Check.Biomass(a,1) = tmp.Stats.Biomass;
-    LOPC.Check.MnCounts(a,1) = tmp.Stats.Abundance;
-    LOPC.Check.Vol(a,1) = tmp.Flow.TotalVol;
+%     LOPC.Check.Biomass(a,1) = tmp.Stats.Biomass;
+%     LOPC.Check.MnCounts(a,1) = tmp.Stats.Abundance;
+%     LOPC.Check.Vol(a,1) = tmp.Flow.TotalVol;
     
     disp(['LOPC',num2str(a),' Start Time: ',datestr(tmp.datenum(1))])
     disp(['LOPC',num2str(a),' End Time: ',datestr(tmp.datenum(end))])
@@ -242,7 +261,22 @@ for a = 1:length(files)
     clear tmp
 end
 
-% %% I think this calculates the fitting parameters for the whole transect
+% I need to remove all plankton sizes and counts for
+% incorrect flows if Transit speed is used.
+        
+if strcmp(LOPC.Flow.FlowUsed, 'LOPC SEP Transit Time') == 1
+    LOPC.Flow.Velocity(LOPC.Flow.Transit.Interp==1) = NaN;
+    LOPC.Flow.Vol(LOPC.Flow.Transit.Interp==1) = NaN;
+    LOPC.Flow.Dist(LOPC.Flow.Transit.Interp==1) = NaN;
+
+    LOPC.SMEP(LOPC.Flow.Transit.Interp==1,:) = NaN;
+    LOPC.CPS(LOPC.Flow.Transit.Interp==1,1) = NaN;
+end
+
+
+
+
+% This calculates the fitting parameters for the whole transect
 LOPC = OPC_Parameters(LOPC);
 LOPC = OPC_Pareto(LOPC);
 LOPC = OPC_NBSS(LOPC);

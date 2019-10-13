@@ -50,10 +50,13 @@ LOPC.Flow.Transit.Velocity(fi_bad) = interp1(LOPC.datenum(fi_good),...
 
 LOPC.Flow.Transit.Dist = LOPC.Flow.Transit.Velocity .* [diff(LOPC.secs); nanmean(diff(LOPC.secs))];
 
+LOPC.Flow.Transit.Interp = LOPC.Flow.Transit.Dist .* 0;
+LOPC.Flow.Transit.Interp(fi_bad,1) = 1;
 
 %% Calculate Volume from SEP Transit Speed
 if strcmp(LOPC.Unit,'LabLOPC')==0
     LOPC.Flow.Transit.Vol = LOPC.Flow.Transit.Velocity.*LOPC.Param.SA; % units m^3/s
+  
     % Check there are no NANs
     if isempty(find(isnan(LOPC.Flow.Transit.Vol))==0)
         LOPC.Flow.Transit.TotalVol = sum(LOPC.Flow.Transit.Vol);

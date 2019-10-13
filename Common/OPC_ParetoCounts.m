@@ -6,8 +6,8 @@ if strcmp(OPC.Unit,'OPC2T')==1 ||  strcmp(OPC.Unit,'OPC1T')==1
     
 else
     
-    OPC.Pareto.Binned_Counts = (sum(OPC.SMEP,1))'; % Get counts for all time
-    OPC.Pareto.ESDs = ones(sum(OPC.Pareto.Binned_Counts),1).*NaN;
+    OPC.Pareto.Binned_Counts = (nansum(OPC.SMEP,1))'; % Get counts for all time
+    OPC.Pareto.ESDs = ones(nansum(OPC.Pareto.Binned_Counts),1).*NaN;
 
     if isfield(OPC.Param,'H_Bins')==0 && isfield(OPC,'FileBins') == 0
         OPC.Param.H_Bins = OPC.Param.all_H_Bins(end-(size(OPC.SMEP,2)-1):end);
@@ -21,10 +21,8 @@ else
         error('Error in length of SMEP in OPC_ParetoCounts')
     end
     
-    OPC.Pareto.ESDs = OPC_UnWrapBins(OPC.Pareto.Binned_Counts,OPC.Param.H_Bins);
-     
+    OPC.Pareto.ESDs = OPC_UnWrapBins(OPC.Pareto.Binned_Counts,OPC.Param.H_Bins);  
 end
-
 
 OPC.Pareto.ESDs = OPC.Pareto.ESDs(OPC.Pareto.ESDs>=OPC.MinESD & OPC.Pareto.ESDs<=OPC.MaxESD);
 OPC.Pareto.ParArea = pi .* (OPC.Pareto.ESDs./2).^2;

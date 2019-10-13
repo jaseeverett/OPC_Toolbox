@@ -86,4 +86,4 @@ for i = 1:length(s.datenum)
     end
 end
 
-s.Flow.TotalVol = sum(s.Flow.Vol);
+s.Flow.TotalVol = nansum(s.Flow.Vol);
