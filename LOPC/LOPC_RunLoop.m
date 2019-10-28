@@ -13,9 +13,9 @@ FileList = {'Data/File1.dat'; 'Data/File2.dat'; 'Data/File3.dat'};
 
 fig = 1; % Plot figures or not?
 
-%% Account for splits in the sample. 
+%% Account for splits in the sample.
 % If no splits, no_splits column should be 0
-% csv file should have form 
+% csv file should have form
 % filename, tow_vol_m3, no_splits
 Split = readtable([data_dir,filesep,'LOPC_Metadata.csv']);
 
@@ -24,14 +24,14 @@ for a = 1:length(FileList)
     
     LOPC.MinESD = 200/1e6;
     LOPC.Param.Ellipsoid = 3; % What ratio of Major:Minor axis of plankton to assume
-
+    
     LOPC.MaxESD = 30000/1e6; % 30 mm - Theoretical max is 35 mm
     LOPC.NBSS.min_count = 1;
     
-LOPC.offset = 10; % number of hours to add to sampling time In this case I want to change it to AEST from UTC
-
-LOPC.Lat = -34; % Latitude from which sample was collected. Used for pressure-depth conversion.
-
+    LOPC.offset = 10; % number of hours to add to sampling time In this case I want to change it to AEST from UTC
+    
+    LOPC.Lat = -34; % Latitude from which sample was collected. Used for pressure-depth conversion.
+    
     LOPC.FileName = FileList{a};
     sf = strfind(LOPC.FileName,'/');
     
@@ -85,7 +85,7 @@ LOPC.Lat = -34; % Latitude from which sample was collected. Used for pressure-de
         end
         warning on
         close all
-           
+        
     end
     
     save([output_dir,filesep,LOPC.ShortName(1:end-4),'.mat'],'LOPC')
@@ -109,7 +109,7 @@ LOPC.Lat = -34; % Latitude from which sample was collected. Used for pressure-de
     Compile.Abundance_indm3(a,1) = LOPC.Stats.Abundance;
     Compile.Biomass_mgm3(a,1) = LOPC.Stats.Biomass;
     Compile.GeometricMeanSize(a,1) = LOPC.Stats.GeoMn.*1e6;
-           
+    
     
     clear LOPC
 end
