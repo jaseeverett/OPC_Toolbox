@@ -2,16 +2,24 @@ clear
 close all
 
 %% 100um net used
-% OPC_NetRetention
-% 3:1 L:W = 173um
+
+% Assuming ~100% net retention using a 3:1 ellipsoid ratio, the MinESD for the following net meshes are needed:
+% 100um mesh, 3:1 L:W = 173um
+% 200um mesh, 3:1 L:W = 346um
+% You can test other combinations using Commong/OPC_NetRetention.m
 
 data_dir = 'Data';
 figure_dir = 'Figures';
 output_dir = 'Output';
 
-FileList = {'Data/File1.dat'; 'Data/File2.dat'; 'Data/File3.dat'};
+FileList = {[data_dir,filesep,'Test1.dat']; [data_dir,filesep,'Test2.dat']};
 
 fig = 1; % Plot figures or not?
+
+MinESD = 200/1e6;
+MaxESD = 30000/1e6; % 30 mm - Theoretical max is 35 mm
+Ellipsoid = 3; % What ratio of Major:Minor axis of plankton to assume
+min_count = 1; % Minimum number of counts in a bin before that bin is ignored in the NBSS calculations    
 
 %% Account for splits in the sample.
 % If no splits, no_splits column should be 0
@@ -19,23 +27,18 @@ fig = 1; % Plot figures or not?
 % filename, tow_vol_m3, no_splits
 Split = readtable([data_dir,filesep,'LOPC_Metadata.csv']);
 
+
 %% Process Files
 for a = 1:length(FileList)
-    
-    LOPC.MinESD = 200/1e6;
-    LOPC.Param.Ellipsoid = 3; % What ratio of Major:Minor axis of plankton to assume
-    
-    LOPC.MaxESD = 30000/1e6; % 30 mm - Theoretical max is 35 mm
-    LOPC.NBSS.min_count = 1;
-    
-    LOPC.offset = 10; % number of hours to add to sampling time In this case I want to change it to AEST from UTC
-    
-    LOPC.Lat = -34; % Latitude from which sample was collected. Used for pressure-depth conversion.
-    
     LOPC.FileName = FileList{a};
     sf = strfind(LOPC.FileName,'/');
     
     LOPC.ShortName = LOPC.FileName(sf(end)+1:end);
+
+    LOPC.MinESD = MinESD;
+    LOPC.MaxESD = MaxESD; % 30 mm - Theoretical max is 35 mm
+    LOPC.Param.Ellipsoid = Ellipsoid;
+    LOPC.NBSS.min_count = min_count;
     
     %%
     % Match up the splits with the files
