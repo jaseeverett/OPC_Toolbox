@@ -19,7 +19,7 @@ fig = 1; % Plot figures or not?
 MinESD = 200/1e6;
 MaxESD = 30000/1e6; % 30 mm - Theoretical max is 35 mm
 Ellipsoid = 3; % What ratio of Major:Minor axis of plankton to assume
-min_count = 1; % Minimum number of counts in a bin before that bin is ignored in the NBSS calculations    
+min_count = 1; % Minimum number of counts in a bin before that bin is ignored in the NBSS calculations
 
 %% Account for splits in the sample.
 % If no splits, no_splits column should be 0
@@ -31,10 +31,10 @@ Split = readtable([data_dir,filesep,'LOPC_Metadata.csv']);
 %% Process Files
 for a = 1:length(FileList)
     LOPC.FileName = FileList{a};
-    sf = strfind(LOPC.FileName,'/');
+    sf = strfind(LOPC.FileName,filesep);
     
     LOPC.ShortName = LOPC.FileName(sf(end)+1:end);
-
+    
     LOPC.MinESD = MinESD;
     LOPC.MaxESD = MaxESD; % 30 mm - Theoretical max is 35 mm
     LOPC.Param.Ellipsoid = Ellipsoid;
@@ -74,18 +74,33 @@ for a = 1:length(FileList)
         
         ti = title(LOPC.ShortName(1:end-4),'Interpreter','none');
         set(gcf,'color','w')
-        
         warning off
         out_name = [figure_dir,filesep,LOPC.ShortName(1:end-4)];
-        export_fig(out_name,'-pdf')
         
-        out_name = [figure_dir,filesep,'All_Sites'];
-        
-        if a ==1
+        % Check if export_fig is installed
+        if exist('export_fig.m','file') == 2
             export_fig(out_name,'-pdf')
         else
-            export_fig(out_name,'-pdf','-append')
+            warning('export_fig not installed. Saving figure using built in MATLAB print. You would get better results with export_fig')
+            print(out_name,'-dpdf')
         end
+        
+        % Now do a compilation of all figures
+        out_name = [figure_dir,filesep,'All_Sites'];
+        if exist('export_fig.m','file') == 2
+            if a ==1
+                export_fig(out_name,'-pdf')
+            else
+                export_fig(out_name,'-pdf','-append')
+            end            
+        else
+            if a ==1
+                print(out_name,'-dpdf')
+            else
+                print(out_name,'-dpdf','-append')
+            end
+        end
+                
         warning on
         close all
         
@@ -120,6 +135,3 @@ end
 
 tbl = struct2table(Compile);
 writetable(tbl,[output_dir,filesep,'LOPC_Summary.csv']);
-
-
-
