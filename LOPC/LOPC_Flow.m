@@ -48,7 +48,7 @@ fi_good = find(isnan(LOPC.Flow.Transit.Velocity)==0); % FInd the good data
 LOPC.Flow.Transit.Velocity(fi_bad) = interp1(LOPC.datenum(fi_good),...
     LOPC.Flow.Transit.Velocity(fi_good),LOPC.datenum(fi_bad),'nearest','extrap');
 
-LOPC.Flow.Transit.Dist = LOPC.Flow.Transit.Velocity .* [diff(LOPC.secs); nanmean(diff(LOPC.secs))];
+LOPC.Flow.Transit.Dist = LOPC.Flow.Transit.Velocity .* [diff(LOPC.secs); mean(diff(LOPC.secs),'omitnan')];
 
 LOPC.Flow.Transit.Interp = LOPC.Flow.Transit.Dist .* 0;
 LOPC.Flow.Transit.Interp(fi_bad,1) = 1;
@@ -76,7 +76,7 @@ end
 
 
 %% Flow meter
-if nanmean(LOPC.Eng.Electronic_Counts) > 0 % Flow meter exists and I need to store it
+if mean(LOPC.Eng.Electronic_Counts,'omitnan') > 0 % Flow meter exists and I need to store it
     LOPC.Flow.Meter.Dist = (LOPC.Param.Flow_Meter_Constant.*LOPC.Eng.Electronic_Counts);
     
     fi_bad = find(isnan(LOPC.Flow.Meter.Dist)==1); % Find the bad data

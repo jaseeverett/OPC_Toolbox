@@ -38,7 +38,7 @@ if strcmp(s.Unit,'OPC2T') == 1 | strcmp(s.Unit,'OPC1L') == 1
     OPC.flow_mark = s.flow_mark;
     OPC.Flow.TotalVol = sum(s.vol(fi(~isinf(s.vol(fi)))));
     
-    ESDs = nansum(s.Binned_ESD(fi,:));
+    ESDs = sum(s.Binned_ESD(fi,:),'omitnan');
     s.Bins = OPC_Bio2ESD(s.Bins_ESD,3);
     OPC.ESD = [];
     for i = 1:length(ESDs)
@@ -49,9 +49,9 @@ elseif strcmp(s.Unit,'InSituLOPC') == 1
     disp('Unit is Insitu LOPC')
     
     try
-        OPC.Lat = nanmean(s.Lat);
+        OPC.Lat = mean(s.Lat,'omitnan');
     catch % An investigator dataset
-            OPC.Lat = nanmean(s.latitude);
+            OPC.Lat = mean(s.latitude,'omitnan');
     end
     
     OPC.DateProcessed = datestr(now);
@@ -61,7 +61,7 @@ elseif strcmp(s.Unit,'InSituLOPC') == 1
 %     OPC = LOPC_LOPCBins(OPC);
     OPC.SMEP = s.SMEP(fi,:);
     OPC.Flow.Vol = s.Flow.Vol(fi);
-    OPC.Flow.TotalVol = nansum(OPC.Flow.Vol);
+    OPC.Flow.TotalVol = sum(OPC.Flow.Vol,,'omitnan');
     
 else
     error('No Unit found')
@@ -110,7 +110,7 @@ OPC.ESD = NaN;
 
 OPC = OPC_Parameters(OPC);
 
-OPC.NBSS.Binned_ESD = nansum(s.Binned_ESD(fi,:));
+OPC.NBSS.Binned_ESD = sum(s.Binned_ESD(fi,:),'omitnan');
 OPC.NBSS.Binned_Bio = OPC_ESD2Bio(OPC.NBSS.Binned_ESD,OPC.Param.Ellipsoid);
 OPC.NBSS.Histo = sum(OPC.NBSS.Binned_ESD);
 
@@ -123,7 +123,7 @@ OPC.NBSS.all.Binned_ESD = OPC.NBSS.Binned_ESD;
 OPC.NBSS.to_mg = 1e9; % to convert vol to mg (from Suthers et al 04)
 OPC.NBSS.Bins = s.Bins;
 OPC.NBSS.Limits = s.Limits;
-OPC.Flow.TotalVol = nansum(s.vol(fi));
+OPC.Flow.TotalVol = sum(s.vol(fi),'omitnan');
 
 
 % OPC = OPC_NBSS(OPC);
@@ -181,7 +181,7 @@ OPC.Flow.TotalVol = sum(s.vol(fi(~isinf(s.vol(fi)))));
 OPC = OPC_Parameters(OPC);
 
 
-ESDs = nansum(s.Binned_ESD(fi,:));
+ESDs = sum(s.Binned_ESD(fi,:),'omitnan');
 
 s.Bins = OPC_Bio2ESD(s.Bins_ESD,3);
 
@@ -234,7 +234,7 @@ OPC.ESD = NaN;
 
 OPC = OPC_Parameters(OPC);
 
-OPC.NBSS.Binned_ESD = nansum(s.Binned_ESD(fi,:));
+OPC.NBSS.Binned_ESD = sum(s.Binned_ESD(fi,:),'omitnan');
 OPC.NBSS.Binned_Bio = OPC_ESD2Bio(OPC.NBSS.Binned_ESD,OPC.Param.Ellipsoid);
 OPC.NBSS.Histo = sum(OPC.NBSS.Binned_ESD);
 
@@ -247,7 +247,7 @@ OPC.NBSS.all.Binned_ESD = OPC.NBSS.Binned_ESD;
 OPC.NBSS.to_mg = 1e9; % to convert vol to mg (from Suthers et al 04)
 OPC.NBSS.Bins = s.Bins;
 OPC.NBSS.Limits = s.Limits;
-OPC.Flow.TotalVol = nansum(s.vol(fi));
+OPC.Flow.TotalVol = sum(s.vol(fi),'omitnan');
 
 
 % OPC = OPC_NBSS(OPC);

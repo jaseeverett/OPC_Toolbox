@@ -30,9 +30,9 @@ if ~isempty(Y)
         OPC.Pareto.mdl = p;
         OPC.Pareto.Intercept = p(2);
         OPC.Pareto.Slope = p(1);
-        
-        yfit = polyval(p,log10(NBSS.Bins));
-        yresid = log10(NBSS.NB) - yfit;
+        OPC = OPC_NBSS(OPC);      
+        yfit = polyval(p,log10(OPC.NBSS.Bins));
+        yresid = log10(OPC.NBSS.NB) - yfit;
         SSresid = sum(yresid.^2);
         SStotal = (length(Y)-1) * var(Y);
         OPC.Pareto.RSq = 1 - SSresid/SStotal;

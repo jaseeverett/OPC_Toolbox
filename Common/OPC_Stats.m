@@ -8,7 +8,7 @@ OPC.Stats.Abundance = OPC.Stats.Total_Counts./OPC.Flow.TotalVol;
 OPC.Stats.Biomass = sum(OPC.NBSS.all.Binned_Bio);
 OPC.Stats.BioVol = sum(OPC.NBSS.all.Binned_BioVol);
 
-OPC.Stats.GeoMn = geomean(OPC.Pareto.ESDs);
+OPC.Stats.GeoMn = nangeomean(OPC.Pareto.ESDs);
 OPC.Stats.GeoSD = NaN;
 %     OPC.Stats.GeoSD = geostd(OPC.Pareto.ESDs);
 

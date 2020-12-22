@@ -54,8 +54,8 @@ Compile.Bio = Bio;
 
 %% Reduce the Compile.NBSS to remove min sizes and zero bins
 
-Compile.NB_Mean = nanmean(Compile.NBSS,2); % Arithmetic Mean
-Compile.NB_SD = nanstd(Compile.NBSS,1,2); % Standard Deviation
+Compile.NB_Mean = mean(Compile.NBSS,2,'omitnan'); % Arithmetic Mean
+Compile.NB_SD = std(Compile.NBSS,1,2,'omitnan'); % Standard Deviation
 
 fi1 = find(Compile.Limits >= OPC.MinESD);
 fi2 = find(Compile.NB_Mean == 0,1,'first')-1;
@@ -142,20 +142,20 @@ if nargin == 2
     out.Counts(a,1) = OPC.Av.Counts;
     out.CountsSD(a,1) = OPC.Av.CountsSD;
     
-    out.Slope(a,1) = nanmean(OPC.Av.Slope);
-    out.SlopeSD(a,1) = nanstd(OPC.Av.SlopeSD);
+    out.Slope(a,1) = mean(OPC.Av.Slope,'omitnan');
+    out.SlopeSD(a,1) = std(OPC.Av.SlopeSD,'omitnan');
     
-    out.Intercept(a,1) = nanmean(OPC.Av.Intercept);
-    out.InterceptSD(a,1) = nanstd(OPC.Av.InterceptSD);
+    out.Intercept(a,1) = mean(OPC.Av.Intercept,'omitnan');
+    out.InterceptSD(a,1) = std(OPC.Av.InterceptSD,'omitnan');
     
-    out.XVertex(a,1) = nanmean(OPC.Av.XVertex);
-    out.XVertexSD(a,1) = nanstd(OPC.Av.XVertexSD);
+    out.XVertex(a,1) = mean(OPC.Av.XVertex,'omitnan');
+    out.XVertexSD(a,1) = std(OPC.Av.XVertexSD,'omitnan');
     
-    out.YVertex(a,1) = nanmean(OPC.Av.YVertex);
-    out.YVertexSD(a,1) = nanstd(OPC.Av.YVertexSD);
+    out.YVertex(a,1) = mean(OPC.Av.YVertex,'omitnan');
+    out.YVertexSD(a,1) = std(OPC.Av.YVertexSD),'omitnan';
     
-    out.Curve(a,1) = nanmean(OPC.Av.Curve);
-    out.CurveSD(a,1) = nanstd(OPC.Av.CurveSD);
+    out.Curve(a,1) = mean(OPC.Av.Curve,'omitnan');
+    out.CurveSD(a,1) = std(OPC.Av.CurveSD,'omitnan');
     
     out.n(a,1) = length(OPC.Compile.Vol);
     

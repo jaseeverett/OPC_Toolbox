@@ -64,7 +64,7 @@ Compile.Binned_Biomass(:,2) = mean(Compile.Binned_Biomass_all,2);
 
 %% Reduce the Compile.NBSS to remove min sizes and zero bins
 
-Compile.NBSS = nanmean(Compile.NBSS_all,2); % Arithmetic Mean
+Compile.NBSS = mean(Compile.NBSS_all,2,'omitnan'); % Arithmetic Mean
 Compile.NBSS_SD = nanstd(Compile.NBSS,1,2); % Standard Deviation
 
 fi1 = find(Compile.Limits >= OPC.MinESD);
