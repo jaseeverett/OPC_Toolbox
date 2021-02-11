@@ -6,7 +6,7 @@ end
 
 s = 1;
 fi = find(Histo>0);
-ESD = ones(nansum(Histo),1).*NaN;
+ESD = ones(sum(Histo,'omitnan'),1).*NaN;
 
 % Expand Binned Counts to ESD
 for ii = 1:length(fi)

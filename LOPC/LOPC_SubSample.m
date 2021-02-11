@@ -35,17 +35,17 @@ for i = 1:length(s.datenum)
         s.SMEP(i,:) = sum(LOPC.SMEP(fi,:),1);
         
         s.Flow.Transit.Vol(i,1) = sum(LOPC.Flow.Transit.Vol(fi));
-        s.Flow.Transit.Velocity(i,1) = nanmean(LOPC.Flow.Transit.Velocity(fi));
+        s.Flow.Transit.Velocity(i,1) = mean(LOPC.Flow.Transit.Velocity(fi),'omitnan');
         s.Flow.Transit.Dist(i,1) = sum(LOPC.Flow.Transit.Dist(fi));
         
         if isfield(LOPC.Flow,'Meter')
             s.Flow.Meter.Vol(i,1) = sum(LOPC.Flow.Meter.Vol(fi));
-            s.Flow.Meter.Velocity(i,1) = nanmean(LOPC.Flow.Meter.Velocity(fi));
+            s.Flow.Meter.Velocity(i,1) = mean(LOPC.Flow.Meter.Velocity(fi),'omitnan');
             s.Flow.Meter.Dist(i,1) = sum(LOPC.Flow.Meter.Dist(fi));
         end
         
         s.Flow.Vol(i,1) = sum(LOPC.Flow.Vol(fi));
-        s.Flow.Velocity(i,1) = nanmean(LOPC.Flow.Velocity(fi));
+        s.Flow.Velocity(i,1) = mean(LOPC.Flow.Velocity(fi),'omitnan');
         s.Flow.Dist(i,1) = sum(LOPC.Flow.Dist(fi));
         
         %% Get Slopes
@@ -86,4 +86,4 @@ for i = 1:length(s.datenum)
     end
 end
 
-s.Flow.TotalVol = nansum(s.Flow.Vol);
+s.Flow.TotalVol = sum(s.Flow.Vol,'omitnan');

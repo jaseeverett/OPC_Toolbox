@@ -84,9 +84,9 @@ LOPC.Flow.TotalVol = sum(vol);
 LOPC = LOPC_Pareto(LOPC);
 LOPC = LOPC_NBSS(LOPC);
 
-LOPC.VertBio = squeeze(nanmean(VertBio));
-LOPC.VertBio_SD = squeeze(nanstd(VertBio));
-LOPC.VertBio_SE = squeeze(nanste(VertBio));
+LOPC.VertBio = squeeze(mean(VertBio),'omitnan');
+LOPC.VertBio_SD = squeeze(std(VertBio,'omitnan'));
+LOPC.VertBio_SE = squeeze(std(VertBio),'omitnan');
 
 
 % Add in compiled raw data

@@ -440,8 +440,8 @@ if isfield(OPC,'GPS') == 1
     OPC.GPS.Lon(OPC.GPS.Lon==0) = NaN;
     
     for i = 1:length(uni)
-        OPC.GPS.Lat(OPC.DigiTime==uni(i)) = nanmean(OPC.GPS.Lat(OPC.DigiTime==uni(i)));
-        OPC.GPS.Lon(OPC.DigiTime==uni(i)) = nanmean(OPC.GPS.Lon(OPC.DigiTime==uni(i)));
+        OPC.GPS.Lat(OPC.DigiTime==uni(i)) = mean(OPC.GPS.Lat(OPC.DigiTime==uni(i)),'omitnan');
+        OPC.GPS.Lon(OPC.DigiTime==uni(i)) = mean(OPC.GPS.Lon(OPC.DigiTime==uni(i)),'omitnan');
     end
 end
 

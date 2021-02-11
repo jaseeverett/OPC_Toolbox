@@ -63,7 +63,7 @@ if flow_mark ~= 3
     %% Calculate Volume %%
     % OPC-2T aperture is 10 cm x 2 cm
     OPC.Flow.Vol = OPC.SA.*OPC.Flow.Flow; % (m3/s)
-    OPC.Flow.TotalVol = nansum(OPC.Flow.Vol);
+    OPC.Flow.TotalVol = sum(OPC.Flow.Vol,,'omitnan');
     OPC.Flow.FlowUsed = 'Flowmeter';
 elseif flow_mark == 3
     OPC.Flow.Vol = vol;

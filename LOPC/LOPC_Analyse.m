@@ -60,7 +60,7 @@ LOPC = LOPC_Engineer(LOPC,data);
 LOPC = LOPC_Flow(LOPC);
 
 LOPC.deltaTime = diff(LOPC.datenum);  %d-1
-LOPC.deltaTime(length(LOPC.deltaTime)+1,1) = nanmean(LOPC.deltaTime);
+LOPC.deltaTime(length(LOPC.deltaTime)+1,1) = mean(LOPC.deltaTime,'omitnan');
 
 %% Running Abundance
 if strcmp(LOPC.Unit,'LabLOPC') == 0

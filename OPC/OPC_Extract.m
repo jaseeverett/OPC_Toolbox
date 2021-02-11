@@ -89,7 +89,7 @@ end
 OPC.datenum = datenum(OPC.d00_date) + OPC.DigiTime./86400;
 
 OPC.secs_diff = [NaN; diff(OPC.datenum.*86400)];
-OPC.secs_diff(1) =  nanmean(OPC.secs_diff);
+OPC.secs_diff(1) =  mean(OPC.secs_diff,'omitnan');
 
 OPC.secs = (OPC.datenum-OPC.datenum(1)).*86400;
 
@@ -112,7 +112,7 @@ if isfield(OPC,'User') & OPC.Flow.flow_mark~=2 % At this stage, not all files ap
     b = 0.037;
     OPC.Flow.Velocity = (m * OPC.Flow.RawCounts + b) ./100; % m/s
     OPC.Flow.Vol = OPC.SA.*OPC.Flow.Velocity; % (m3/s)
-    OPC.Flow.TotalVol = nansum(OPC.Flow.Vol);
+    OPC.Flow.TotalVol = sum(OPC.Flow.Vol,,'omitnan');
     OPC.Flow.FlowUsed = 'Flowmeter';
     OPC.Flow.flow_mark = 5;
     
@@ -127,7 +127,7 @@ if OPC.Flow.flow_mark ~= 5 && (OPC.Flow.flow_mark == 1 || isfield(OPC.Flow,'RawC
     
     OPC.Flow.Velocity = OPC_CalcFlow(OPC.Flow.RawCounts);
     OPC.Flow.Vol = OPC.SA.*OPC.Flow.Velocity; % (m3/s)
-    OPC.Flow.TotalVol = nansum(OPC.Flow.Vol);
+    OPC.Flow.TotalVol = sum(OPC.Flow.Vol,,'omitnan');
     OPC.Flow.FlowUsed = 'Flowmeter';
     
     OPC.Flow.flow_mark = 1;
@@ -151,7 +151,7 @@ elseif OPC.Flow.flow_mark == 3 % Volume passed in
 elseif OPC.Flow.flow_mark == 4 % VDV Flowmeter
     
     OPC.Flow.Vol = OPC.SA.*OPC.Flow.Velocity; % (m3/s)
-    OPC.Flow.TotalVol = nansum(OPC.Flow.Vol);
+    OPC.Flow.TotalVol = sum(OPC.Flow.Vol,,'omitnan');
     OPC.Flow.FlowUsed = 'VDV Flowmeter';
     
     
