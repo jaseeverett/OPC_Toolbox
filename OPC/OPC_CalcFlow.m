@@ -23,11 +23,11 @@ function Velocity = OPC_CalcFlow(Flow)
 
 x = 1:length(Flow);
 
-fi_bad = find(Flow==0);
-fi_good = find(Flow>0);
+fi_bad = find(Flow == 0);
+fi_good = find(Flow > 0);
 
 if ~isempty(fi_bad)
-    Flow(fi_bad) = interp1(x(fi_good),Flow(fi_good),x(fi_bad),'nearest');
+    Flow(fi_bad) = interp1(x(fi_good), Flow(fi_good), x(fi_bad),'nearest');
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -35,8 +35,6 @@ end
 % For the General Oceanics GO2031H with standard rotor:
 m = 0.13;
 b = 0.037;
-x = 7200./Flow; % (Hz)
-Velocity = m * x + b; % m/s
-
-
+x = 7200 ./ Flow; % (Hz)
+Velocity = m * x + b; % m / s
 

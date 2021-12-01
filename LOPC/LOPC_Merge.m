@@ -29,8 +29,8 @@ for a = 1:length(files)
         tmp = LOPC_Setup(files{a},ESD);
         tmp = LOPC_Analyse(tmp);
         
-         % There are many 4 where the Flowmeter didn't work properly. I am 
-         % not sure how else to remove it, other than to hardwire it here.
+        % There are many where the Flowmeter didn't work properly. I am
+        % not sure how else to remove it, other than to hardwire it here.
         if strcmpi(tmp.FileName,'LOPC/LOPC_2016-09-07_042014.dat') == 1 || ...
                 strcmpi(tmp.FileName,'LOPC/LOPC_2016-09-06_201453.dat') == 1 || ...
                 strcmpi(tmp.FileName,'LOPC/LOPC_2016-01-12_132318.dat') == 1 || ...
@@ -47,12 +47,16 @@ for a = 1:length(files)
                 strcmpi(tmp.FileName,'LOPC/LOPC_2016-04-06_070527.dat') == 1 || ...
                 strcmpi(tmp.FileName,'LOPC/LOPC_2018-04-07_082805.dat') == 1 || ...
                 strcmpi(tmp.FileName,'LOPC/LOPC_2018-04-23_085939.dat') == 1 || ...
-                strcmpi(tmp.FileName,'LOPC/LOPC_2018-05-03_084845.dat') == 1 || ... 
+                strcmpi(tmp.FileName,'LOPC/LOPC_2018-05-03_084845.dat') == 1 || ...
                 strcmpi(tmp.FileName,'LOPC/LOPC_2018-05-06_090521.dat') == 1 || ...
                 strcmpi(tmp.FileName,'LOPC/LOPC_2018-05-07_043546.dat') == 1 || ...
-                strcmpi(tmp.FileName,'LOPC/LOPC_2018-11-08_150034.dat') == 1 || ...
-                strcmpi(tmp.FileName,'LOPC/LOPC_2018-11-11_075926.dat') == 1 || ...
-                strcmpi(tmp.FileName,'LOPC/LOPC_2018-11-11_082431.dat') == 1 || ...
+                strcmpi(tmp.FileName,'LOPC/LOPC_2018-10-29_092447.dat') == 1 || ... % in2018_v05_04_002Avg.nc
+                strcmpi(tmp.FileName,'LOPC/LOPC_2018-10-29_162327.dat') == 1 || ... % in2018_v05_04_003Avg.nc
+                strcmpi(tmp.FileName,'LOPC/LOPC_2018-11-02_231945.dat') == 1 || ... % in2018_v05_06_002Avg.nc
+                strcmpi(tmp.FileName,'LOPC/LOPC_2018-11-05_095425.dat') == 1 || ... % in2018_v05_07_002Avg.nc
+                strcmpi(tmp.FileName,'LOPC/LOPC_2018-11-08_150034.dat') == 1 || ... % in2018_v05_08_003Avg.nc
+                strcmpi(tmp.FileName,'LOPC/LOPC_2018-11-11_075926.dat') == 1 || ... % Not using anymore
+                strcmpi(tmp.FileName,'LOPC/LOPC_2018-11-11_082431.dat') == 1 || ... % in2018_v05_10_003Avg.nc
                 strcmpi(tmp.FileName,'LOPC/LOPC_2019-06-06_164346.dat') == 1 || ...
                 strcmpi(tmp.FileName,'LOPC/LOPC_2019-06-06_164346.dat') == 1 || ...
                 strcmpi(tmp.FileName,'LOPC/LOPC_2019-06-08_090526.dat') == 1 || ...
@@ -62,7 +66,16 @@ for a = 1:length(files)
                 strcmpi(tmp.FileName,'LOPC/LOPC_2019-09-17_083359.dat') == 1 || ...
                 strcmpi(tmp.FileName,'LOPC/LOPC_2019-09-21_141827.dat') == 1 || ...
                 strcmpi(tmp.FileName,'LOPC/LOPC_2019-09-24_075830.dat') == 1 || ...
-                strcmpi(tmp.FileName,'LOPC/LOPC_2019-09-27_163550.dat') == 1
+                strcmpi(tmp.FileName,'LOPC/LOPC_2019-09-27_163550.dat') == 1 || ...
+                strcmpi(tmp.FileName,'LOPC/LOPC_2019-10-24_002131.dat') == 1 || ... % deployment1Leg4Avg.nc
+                strcmpi(tmp.FileName,'LOPC/LOPC_2019-10-25_175434.dat') == 1 || ... % deployment1Leg6Avg.nc
+                strcmpi(tmp.FileName,'LOPC/LOPC_2019-11-02_012624.dat') == 1 || ... % deployment2Leg2Avg.nc
+                strcmpi(tmp.FileName,'LOPC/LOPC_2019-11-02_133936.dat') == 1 || ... % deployment2Leg3Avg.nc
+                strcmpi(tmp.FileName,'LOPC/LOPC_2019-11-03_091711.dat') == 1 || ... % deployment2Leg4Avg.nc
+                strcmpi(tmp.FileName,'LOPC/LOPC_2019-11-04_021824.dat') == 1 || ... % deployment2Leg6Avg.nc
+                strcmpi(tmp.FileName,'LOPC/LOPC_2020-11-19_111922.dat') == 1 || ... % in2020_v10_02_001Ctd.nc
+                strcmpi(tmp.FileName,'LOPC/LOPC_2020-11-21_105532.dat') == 1 || ... % in2020_v10_04_005Ctd.nc
+                strcmpi(tmp.FileName,'LOPC/LOPC_2021-05-10_185900.dat') == 1        % deployment1Avg.nc
             
             
             if isfield(tmp.Flow,'Meter')
@@ -87,15 +100,15 @@ for a = 1:length(files)
             disp(['Replacing Flowmeter with Transit Speed due to FlowMeter Probs in file: ',tmp.FileName])
             disp(' ')
         end
-              
+        
     elseif dat == 0 % otherwise just load
         eval(['load ',files{a},' s'])
         tmp = s; clear s
     end
     
-%     disp(['Start LOPC ',num2str(a),': ',datestr(tmp.datenum(1))])
-%     disp(['End LOPC ',num2str(a),': ',datestr(tmp.datenum(end))])
-%     disp([' '])
+    %     disp(['Start LOPC ',num2str(a),': ',datestr(tmp.datenum(1))])
+    %     disp(['End LOPC ',num2str(a),': ',datestr(tmp.datenum(end))])
+    %     disp([' '])
     
     % For the first file, it is just processed as usual above and here we
     % pull out the  variables we need.
@@ -208,7 +221,7 @@ for a = 1:length(files)
         LOPC.Flow.Transit.Dist = [LOPC.Flow.Transit.Dist; tmp.Flow.Transit.Dist];
         LOPC.Flow.Transit.Interp = [LOPC.Flow.Transit.Interp; tmp.Flow.Transit.Interp];
         
-%         % Volume from Flow Meter
+        %         % Volume from Flow Meter
         if isfield(tmp.Flow,'Meter') % Flow meter exists and I need to store it
             LOPC.Flow.Meter.Dist = [LOPC.Flow.Meter.Dist; tmp.Flow.Meter.Dist];
             LOPC.Flow.Meter.Velocity = [LOPC.Flow.Meter.Velocity; tmp.Flow.Meter.Velocity];
@@ -216,13 +229,13 @@ for a = 1:length(files)
             LOPC.Flow.Meter.TotalVol = sum(LOPC.Flow.Meter.Vol);
             LOPC.Flow.Meter.Dist = [LOPC.Flow.Meter.Dist; tmp.Flow.Meter.Dist];
         end
-
+        
         % The determination of Flow Meter vs Transit Speed is done in LOPC_Flow
-        LOPC.Flow.Velocity = [LOPC.Flow.Velocity; tmp.Flow.Velocity];  
+        LOPC.Flow.Velocity = [LOPC.Flow.Velocity; tmp.Flow.Velocity];
         LOPC.Flow.Dist = [LOPC.Flow.Dist; tmp.Flow.Dist];
         LOPC.Flow.Vol = [LOPC.Flow.Vol; tmp.Flow.Vol];
         LOPC.Flow.TotalVol = sum(LOPC.Flow.Vol);
-
+        
         
         %% Do GPS
         
@@ -257,9 +270,9 @@ for a = 1:length(files)
         
     end
     
-%     LOPC.Check.Biomass(a,1) = tmp.Stats.Biomass;
-%     LOPC.Check.MnCounts(a,1) = tmp.Stats.Abundance;
-%     LOPC.Check.Vol(a,1) = tmp.Flow.TotalVol;
+    %     LOPC.Check.Biomass(a,1) = tmp.Stats.Biomass;
+    %     LOPC.Check.MnCounts(a,1) = tmp.Stats.Abundance;
+    %     LOPC.Check.Vol(a,1) = tmp.Flow.TotalVol;
     
     disp(['LOPC',num2str(a),' Start Time: ',datestr(tmp.datenum(1))])
     disp(['LOPC',num2str(a),' End Time: ',datestr(tmp.datenum(end))])
@@ -270,12 +283,12 @@ end
 
 % I need to remove all plankton sizes and counts for
 % incorrect flows if Transit speed is used.
-        
+
 if strcmp(LOPC.Flow.FlowUsed, 'LOPC SEP Transit Time') == 1
     LOPC.Flow.Velocity(LOPC.Flow.Transit.Interp==1) = NaN;
     LOPC.Flow.Vol(LOPC.Flow.Transit.Interp==1) = NaN;
     LOPC.Flow.Dist(LOPC.Flow.Transit.Interp==1) = NaN;
-
+    
     LOPC.SMEP(LOPC.Flow.Transit.Interp==1,:) = NaN;
     LOPC.CPS(LOPC.Flow.Transit.Interp==1,1) = NaN;
 end

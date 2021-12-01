@@ -56,7 +56,7 @@ OPC.NBSS.all.Binned_BioVol = (OPC.NBSS.all.Histo.*OPC.NBSS.all.Bins_BioVol)./OPC
 %     clear h fi
 % end
 
-%% 3. NBSS Bines to use
+%% 3. NBSS Bin  s to use
 h = histc(OPC.Pareto.ParBio,OPC.NBSS.Limits)';
 
 if size(h,2)==1; h = h'; end

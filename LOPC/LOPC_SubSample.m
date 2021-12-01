@@ -59,10 +59,7 @@ for i = 1:length(s.datenum)
             
         L = OPC_Pareto(L);
         L = OPC_NBSS(L);
-        
-%         if L.Flow.TotalVol == 0
-%             L.Stats.Biomass    
-%         end
+
         
         s.Bins_ESD = L.Param.H_Bins;
         

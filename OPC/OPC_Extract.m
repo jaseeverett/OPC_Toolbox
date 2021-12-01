@@ -42,6 +42,9 @@ function OPC = OPC_Extract(file,in)
 %
 % Written by Jason Everett (UNSW).
 % 22nd May 2008
+% Flow calculations updated on 8th August 2016 to remove all the if and elseifs
+% Error found 2nd November 2021. Volume should be Dist * SA. Not Velocity * SA
+
 
 disp(' ')
 disp(['Processing ',file,' via OPC_Extract'])
@@ -93,40 +96,60 @@ OPC.secs_diff(1) =  nanmean(OPC.secs_diff);
 
 OPC.secs = (OPC.datenum-OPC.datenum(1)).*86400;
 
-if isfield(OPC,'User') & OPC.Flow.flow_mark~=2 % At this stage, not all files apply the 'User' file prior to this point. I will fix this u pin a later version
-    %% If these conditions are met, it is likely that the VDV Acoustic and GO Flow Meter are on the OPC
-    if strcmp(OPC.User,'Hopcroft')==1 && (isfield(OPC.Raw,'ID12')==1 || isfield(OPC.Raw,'ID13')==1)
+if isfield(OPC,'User') & OPC.Flow.flow_mark ~= 2 % At this stage, not all files apply the 'User' variable prior to this point. I will fix this u pin a later version
+    
+    if strcmp(OPC.User,'Hopcroft')==1
         
-        % First do VDV
-        OPC = MissLink_Hopcroft_VDV(OPC);
+        if OPC.datenum(1) > datenum(1998, 8, 20) && OPC.datenum(1) < datenum(1998, 12, 1) % Dates of these voyage
+            % strcmp(OPC.Voyage,'980821Cruise') || ... %  VDV + GO
+            %                 strcmp(OPC.Voyage,'981106Cruise') %  VDV + GO
+            %
+            % First do VDV
+            OPC = MissLink_Hopcroft_VDV(OPC);
+            
+            % Then start on GO
+            OPC.Flow.RawCounts = OPC.Raw.ID12;
+            
+        elseif OPC.datenum(1) > datenum(1998, 3, 1) && OPC.datenum(1) < datenum(1998, 6, 1) % Dates of these voyage
+            %             strcmp(OPC.Voyage,'980320Cruise') || ...  %  VDV Only
+            %                 strcmp(OPC.Voyage,'980508Cruise') %  VDV Only
+            
+            % Do VDV
+            OPC = MissLink_Hopcroft_VDV(OPC);
+            
+            OPC.Flow = OPC.Flow2; % Only VDV so rename flow
+            OPC = rmfield(OPC, 'Flow2');
+        end
         
-        % Then start on GO
-        OPC.Flow.RawCounts = OPC.Raw.ID12;
-        
-    else
+    else % All other voyages
         OPC.Flow.RawCounts = OPC.Raw.ID8;
     end
     
-    % Hopcroft Flowmeter uses different co-efficients
-    m = 0.13;
-    b = 0.037;
-    OPC.Flow.Velocity = (m * OPC.Flow.RawCounts + b) ./100; % m/s
-    OPC.Flow.Vol = OPC.SA.*OPC.Flow.Velocity; % (m3/s)
-    OPC.Flow.TotalVol = nansum(OPC.Flow.Vol);
-    OPC.Flow.FlowUsed = 'Flowmeter';
-    OPC.Flow.flow_mark = 5;
+    if strcmp(OPC.User,'Hopcroft') == 1 && isfield(OPC.Flow,'RawCounts')
+        % Hopcroft Flowmeter uses different co-efficients
+        m = 0.13;
+        b = 0.037;
+        OPC.Flow.Velocity = (m * OPC.Flow.RawCounts + b) ./100; % m/s
+        
+        OPC.Flow.Dist = OPC.Flow.Velocity .* OPC.secs_diff; % m
+        OPC.Flow.Vol = OPC.SA .* OPC.Flow.Dist; % (m3)
+        % OPC.Flow.Vol = OPC.SA .* OPC.Flow.Velocity; % (m3/s) Fixed 2nd November 2021
+        OPC.Flow.TotalVol = nansum(OPC.Flow.Vol);
+        OPC.Flow.FlowUsed = 'Flowmeter';
+        OPC.Flow.flow_mark = 5;
+        
+    end
     
-    OPC.Flow.Dist = OPC.Flow.Velocity .* OPC.secs_diff;
 end
 
 
-
-%% Flow calculations updated on 8th August 2016 to remove all the if and elseifs
-
+%% Flow calculations
 if OPC.Flow.flow_mark ~= 5 && (OPC.Flow.flow_mark == 1 || isfield(OPC.Flow,'RawCounts')==1) % Flowmeter
     
     OPC.Flow.Velocity = OPC_CalcFlow(OPC.Flow.RawCounts);
-    OPC.Flow.Vol = OPC.SA.*OPC.Flow.Velocity; % (m3/s)
+    OPC.Flow.Dist = OPC.Flow.Velocity .* OPC.secs_diff; % m
+    OPC.Flow.Vol = OPC.SA .* OPC.Flow.Dist; % (m3)
+    % OPC.Flow.Vol = OPC.SA .* OPC.Flow.Velocity; % (m3/s) Fixed 2nd November 2021
     OPC.Flow.TotalVol = nansum(OPC.Flow.Vol);
     OPC.Flow.FlowUsed = 'Flowmeter';
     
@@ -150,7 +173,10 @@ elseif OPC.Flow.flow_mark == 3 % Volume passed in
     
 elseif OPC.Flow.flow_mark == 4 % VDV Flowmeter
     
-    OPC.Flow.Vol = OPC.SA.*OPC.Flow.Velocity; % (m3/s)
+    OPC.Flow.Dist = OPC.Flow.Velocity .* OPC.secs_diff; % m
+    OPC.Flow.Vol = OPC.SA .* OPC.Flow.Dist; % m3
+    % OPC.Flow.Vol = OPC.SA .* OPC.Flow.Velocity; % (m3/s) Fixed 2nd November 2021
+    
     OPC.Flow.TotalVol = nansum(OPC.Flow.Vol);
     OPC.Flow.FlowUsed = 'VDV Flowmeter';
     

@@ -9,10 +9,11 @@ function LOPC = LOPC_Flow(LOPC)
 % August 2013
 % Updated August 2016
 % Updated October 2017 to include distance calculations
+% Update volume calculations November 2021
 
 %% Get Flow data from the engineering structure
 LOPC.Flow.Transit.Counts = LOPC.Eng.Delta_Time./LOPC.Eng.Flow_Counts;
-LOPC.Flow.Transit.Velocity = ones(length(LOPC.Flow.Transit.Counts),1).*NaN; %Preallocate
+LOPC.Flow.Transit.Velocity = ones(length(LOPC.Flow.Transit.Counts),1).*NaN; % Preallocate
 
 % Apply the co-efficients from Herman's documentation
 for i = 1:length(LOPC.Flow.Transit.Counts)
@@ -38,7 +39,8 @@ for i = 1:length(LOPC.Flow.Transit.Counts)
 end
 clear f* i
 
-max_flow = 10; % ms-1
+% TODO - Add better filtering and smoothing in here. 
+max_flow = 10; % m s-1
 LOPC.Flow.Transit.Velocity(LOPC.Flow.Transit.Velocity>max_flow) = NaN;
 
 fi_bad = find(isnan(LOPC.Flow.Transit.Velocity)==1); % Find the bad data
@@ -46,16 +48,18 @@ fi_good = find(isnan(LOPC.Flow.Transit.Velocity)==0); % FInd the good data
 
 % Replace bad with good
 LOPC.Flow.Transit.Velocity(fi_bad) = interp1(LOPC.datenum(fi_good),...
-    LOPC.Flow.Transit.Velocity(fi_good),LOPC.datenum(fi_bad),'nearest','extrap');
+    LOPC.Flow.Transit.Velocity(fi_good),LOPC.datenum(fi_bad),'nearest','extrap');  % units m/s
 
-LOPC.Flow.Transit.Dist = LOPC.Flow.Transit.Velocity .* [diff(LOPC.secs); nanmean(diff(LOPC.secs))];
+LOPC.Flow.Transit.Dist = LOPC.Flow.Transit.Velocity .* [diff(LOPC.secs); nanmean(diff(LOPC.secs))];  % units m
 
-LOPC.Flow.Transit.Interp = LOPC.Flow.Transit.Dist .* 0;
+LOPC.Flow.Transit.Interp = LOPC.Flow.Transit.Dist .* 0; % Did we interp the data? Add a marker.
 LOPC.Flow.Transit.Interp(fi_bad,1) = 1;
 
 %% Calculate Volume from SEP Transit Speed
 if strcmp(LOPC.Unit,'LabLOPC')==0
-    LOPC.Flow.Transit.Vol = LOPC.Flow.Transit.Velocity.*LOPC.Param.SA; % units m^3/s
+    % Error found 2nd November 2021. Should be Dist * SA. Not Velocity
+    % LOPC.Flow.Transit.Vol = LOPC.Flow.Transit.Velocity .* LOPC.Param.SA; % units m^3/s
+    LOPC.Flow.Transit.Vol = LOPC.Flow.Transit.Dist .* LOPC.Param.SA; % units m^3
   
     % Check there are no NANs
     if isempty(find(isnan(LOPC.Flow.Transit.Vol))==0)
@@ -92,7 +96,9 @@ if nanmean(LOPC.Eng.Electronic_Counts) > 0 % Flow meter exists and I need to sto
     dt = [dt; dt(end)];
     
     LOPC.Flow.Meter.Velocity = LOPC.Flow.Meter.Dist ./ dt; % m s-1
-    LOPC.Flow.Meter.Vol = LOPC.Flow.Meter.Velocity.*LOPC.Param.SA;
+    % Error found 2nd November 2021. Should be Dist * SA. Not Velocity
+    % LOPC.Flow.Meter.Vol = LOPC.Flow.Meter.Velocity.*LOPC.Param.SA;
+    LOPC.Flow.Meter.Vol = LOPC.Flow.Meter.Dist .* LOPC.Param.SA;
     clear dt
     
     if isempty(find(isnan(LOPC.Flow.Meter.Vol))==0)
@@ -102,8 +108,8 @@ if nanmean(LOPC.Eng.Electronic_Counts) > 0 % Flow meter exists and I need to sto
     end
 end
 
-%% Only useful for vertical profiles. Turn off for the moment.
 
+%% Assign flowmeter to be the main flow measurement
 if isfield(LOPC.Flow,'Meter')
     LOPC.Flow.Dist = LOPC.Flow.Meter.Dist;
     LOPC.Flow.Velocity = LOPC.Flow.Meter.Velocity;
@@ -111,7 +117,7 @@ if isfield(LOPC.Flow,'Meter')
     LOPC.Flow.TotalVol = LOPC.Flow.Meter.TotalVol;
     LOPC.Flow.FlowUsed = 'Flowmeter';
     
-elseif ~strcmp(LOPC.Unit,'LabLOPC')  % Logger but no CTD
+elseif ~strcmp(LOPC.Unit,'LabLOPC')  % No CTD/FlowMeter
     LOPC.Flow.FlowUsed = 'LOPC SEP Transit Time';
     
     % Otherwise use the LOPC derived flow speeds

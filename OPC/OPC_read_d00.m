@@ -52,13 +52,6 @@ if strcmp(file(end-2),'D')==1 || strcmp(file(end-2:end),'OPC')==1 % Binary file
     % The following information regarding data format were taken from Page 6 of
     % the OPC Users Manual (October 2001) or worked out by the author.
     Header = (fread(fid, 24,'*char'))';
-    %
-    
-    %%    CODE WHEN I WAS TRYING TO WORK OUT WHAY ALL THE ID=15
-    %     start = 27; % Start position of OPC Data
-    %     fseek(fid,start,'bof');
-    %     [data,count] = fread(fid, 'ubit4');
-    %
     
     
     % Rearrange the OPC Header to give a meaningful date
@@ -78,9 +71,9 @@ if strcmp(file(end-2),'D')==1 || strcmp(file(end-2:end),'OPC')==1 % Binary file
             
             %If incorrect ID number, don't increase a, and then the next
             %loop will overwrite the previous value.
-            if OPC.Raw.ID(a,1) == 0 || OPC.Raw.ID(a,1) > 14
+            if OPC.Raw.ID(a,1) == 0 || OPC.Raw.ID(a,1) > 15 % Hopcroft data has 15 so changing from 14.
                 %                 disp(['RawID = ',num2str(OPC.Raw.ID(a,1))])
-                warning('Incorrect OPC ID Number')               
+                warning('Incorrect OPC ID Number')
                 
                 %
                 %                 loc = ftell(fid);
@@ -228,7 +221,7 @@ for ss = 1:length(OPC.Raw.ID)
         
     elseif aa > 0 && OPC.Raw.ID(ss,1) == 10 % Flow3 or Roll --> HopcroftData
         OPC.Raw.ID10(fi_cnt,1) = OPC.Raw.Value(ss,1);
-    
+        
         
     elseif aa > 0 && OPC.Raw.ID(ss,1) == 11 & strcmp(file(end-2),'T')==1 % CTD
         
@@ -305,7 +298,7 @@ end
 bin = 0.5:14.5;
 C = hist(OPC.Raw.ID,bin);
 
-for i = 1:length(C)-1   
+for i = 1:length(C)-1
     if C(i) > 0 && C(i) < 10
         if isfield(OPC.Raw,['ID',num2str(ceil(bin(i))).''])==1
             eval(['OPC.Raw = rmfield(OPC.Raw,''ID',num2str(ceil(bin(i))),''');'])
@@ -440,8 +433,9 @@ if isfield(OPC,'GPS') == 1
     OPC.GPS.Lon(OPC.GPS.Lon==0) = NaN;
     
     for i = 1:length(uni)
-        OPC.GPS.Lat(OPC.DigiTime==uni(i)) = nanmean(OPC.GPS.Lat(OPC.DigiTime==uni(i)));
-        OPC.GPS.Lon(OPC.DigiTime==uni(i)) = nanmean(OPC.GPS.Lon(OPC.DigiTime==uni(i)));
+        dti = OPC.DigiTime==uni(i);
+        OPC.GPS.Lat(dti) = nanmean(OPC.GPS.Lat(dti));
+        OPC.GPS.Lon(dti) = nanmean(OPC.GPS.Lon(dti));
     end
 end
 
