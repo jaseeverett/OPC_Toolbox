@@ -44,7 +44,13 @@ temp = char(data(ix)); %temp char
 % m = data(strncmp(data,'M ',2));
 % temp = char(m);
 
-raw_MEPS = str2num(temp(:,3:end)); %#ok<ST2NM>
+% IN MATLAB 2023B, there seems to be a bug whereby large numbers error in
+% str2num regardless. Here I split the large ones and do it part by part
+if length(temp) > 5000000
+    raw_MEPS = [str2num(temp(1:5000000,3:end)); str2num(temp(5000001:length(temp),3:end))];
+else
+    raw_MEPS = str2num(temp(:,3:end)); %#ok<ST2NM>
+end
 
 
 
